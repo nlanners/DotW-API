@@ -1,9 +1,13 @@
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+const cors = require('cors');
+
 const app = express();
+app.use(cors());
+app.enable('trust proxy');
 
 const source = 'https://www.cdc.gov/dotw?Sort=Date%3A%3Adesc';
 
@@ -16,13 +20,13 @@ async function getCurrentDotW() {
         const html = response.data;
         const $ = cheerio.load(html);
 
-        const cards = $('.card-body', html);
+        const cards = $('.card-body.bg-purple-q', html);
 
         let card = {};
 
-        card.title = $(cards[1]).find('.card-title').text();
-        card.summary = $(cards[1]).find('p').text();
-        card.url = "https://www.cdc.gov" + $(cards[1]).find('a').attr('href');
+        card.title = $(cards).find('.card-title').text();
+        card.summary = $(cards).find('p').text();
+        card.url = "https://www.cdc.gov" + $(cards).find('a').attr('href');
 
         return card;
 
@@ -36,7 +40,7 @@ async function getCurrentDotW() {
 
 /********************* Start Controller Functions ******************************/
 
-app.get('/current', async (req, res) => {
+app.get('/', async (req, res) => {
     try {
         const card = await getCurrentDotW();
 
@@ -45,16 +49,6 @@ app.get('/current', async (req, res) => {
     } catch (err) {
         console.log(err);
     }
-});
-
-app.get('/all', async (req, res) => {
-    try {
-        
-    } catch (err) {
-        console.log(err);
-    }
-
-    res.end();
 });
 
 

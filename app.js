@@ -1,8 +1,6 @@
-const PORT = process.env.PORT || 8000;
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-
 const cors = require('cors');
 
 const app = express();
@@ -54,4 +52,4 @@ app.get('/', async (req, res) => {
 
 /********************* End Controller Functions ******************************/
 
-app.listen(PORT, () => console.log(`server running on PORT ${PORT}`));
+module.exports = app;
